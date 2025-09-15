@@ -1,0 +1,50 @@
+name: 'Spec Kit Action'
+description: 'Automate Spec-Driven Development workflow with AI-powered specification generation'
+
+inputs:
+  command:
+    description: 'SDD command to execute (specify, plan, tasks, validate)'
+    required: true
+
+  ai-provider:
+    description: 'CLI provider (claude)'
+    required: true
+    default: 'claude'
+
+  spec-description:
+    description: 'Feature description for /specify command'
+    required: false
+
+  tech-stack:
+    description: 'Technology stack for /plan command'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Bun
+      if: inputs.path_to_bun_executable == ''
+      uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # https://github.com/oven-sh/setup-bun/releases/tag/v2.0.2
+      with:
+        bun-version: 1.2.11
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        cd ${GITHUB_ACTION_PATH}
+        bun install
+
+    - name: Generate prompt
+      shell: bash
+      run: |
+        {{
+
+    - name: Run action
+      uses: anthropics/claude-code-action@v1
+      with:
+        anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+        trigger_phrase: '@spec'
+        mode: 'tag'
+branding:
+  icon: 'terminal'
+  color: 'blue'
